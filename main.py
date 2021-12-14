@@ -127,6 +127,11 @@ async def ss(ctx,particle,prefab="\0"):
   if currentTag == "":
     await ctx.send("You have not set a tag! Use /tag to set one!")
   else:
+    #a different list will be used to add custom commands which includes specifying a particle and a prefab
+    if particle == "ig3":
+      particle = "&!"
+      prefab = "ig3" 
+    
     ss = ""
     if (len(db["tags"][currentTag])) < 1:
       await ctx.send("There are no names in this tag!")
@@ -136,18 +141,19 @@ async def ss(ctx,particle,prefab="\0"):
         ss += particle
         ss += i
 
-      if prefab != "\0":
-        prefab = prefab.lower()
+      if particle != "\0":
+        prefab = prefab.lower() 
         if prefab == "ig":
           ss = "interactable&giftable" + ss
         elif prefab == "ig3":
-          ss = "interactable&giftable&!friendlevel3&!lucky" + ss
+          ss = "interactable&giftable&!friendlevel3&!lucky" + ss 
+      
       await ctx.send(ss)
 
 
 @client.command()
 async def help(ctx):
-  helpMsg = "Organize groups of friends into tags!\nTo show your tags use the command /tags\nTo start working with a tag use /tag <name-of-tag>\nIf you want to create a new tag use /create <name-of-new-tag> (You can delete tags the same way with /delete\nOnce you have selected a tag use /add <username> or /remove <username> to add and remove people from the tag\nYou can view all the members of a tag by using /list\nTo generate a search string of the users use /ss <particle> i.e. (/ss &) or (/ss &!)\nTo add interactable and giftable friends to the search string or and remove friendlevel3 use ig and ig3 respectively i.e. (/ss &! ig3)"
+  helpMsg = "Organize groups of friends into tags!\nTo show your tags use the command /tags\nTo start working with a tag use /tag <name-of-tag>\nIf you want to create a new tag use /create <name-of-new-tag> (You can delete tags the same way with /delete\nOnce you have selected a tag use /add <username> or /remove <username> to add and remove people from the tag\nYou can view all the members of a tag by using /list\nTo generate a search string of the users use /ss <particle> i.e. (/ss &) or (/ss &!)\nTo add interactable and giftable friends to the search string or and remove friendlevel3 use ig and ig3 respectively i.e. (/ss &! ig3)\nYou can also use /ss ig3 for quick acess!"
   await ctx.send(helpMsg)
 
 
