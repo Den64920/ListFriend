@@ -37,8 +37,10 @@ currentTag = ""
 # commands
 
 @client.command()
+
 async def db(ctx):
-  await ctx.send(tags)
+  from replit import db
+  await ctx.send(db["tags"])
 
 
 @client.command()
@@ -84,7 +86,7 @@ async def delete(ctx,tagName):
 
   tagNameInKeys = tagName in listKeys()
   if tagNameInKeys == True:
-    tags.pop(tagName)
+    db["tags"].pop(tagName)
     await ctx.send("Deleted Tag: "+str(tagName))
   else:
     await ctx.send("Tag Does Not Exist!")
@@ -100,9 +102,8 @@ async def add(ctx,userName):
   else:
     usernameInTag = userName in db["tags"][currentTag]
     if usernameInTag == False:
-      tags[currentTag].append(userName)
+      db["tags"][currentTag].append(userName)
       await ctx.send("Added user: "+str(userName)+" to "+str(currentTag))
-      dbsave()
       print("user saved to db")
     else:
       await ctx.send("This username is already in the tag!")
@@ -110,11 +111,12 @@ async def add(ctx,userName):
 
 @client.command()
 async def remove(ctx,userName):
+  from replit import db
   userName = userName.lower()
   if currentTag == "":
     await ctx.send("You have not set a tag! Use /tag to set one!")
   else:
-    tags[currentTag].remove(userName)
+    db["tags"][currentTag].remove(userName)
     await ctx.send("Removed user: "+str(userName)+" to "+str(currentTag))
 
 
@@ -127,19 +129,20 @@ async def ss(ctx,particle,prefab="\0"):
   else:
     ss = ""
     if (len(db["tags"][currentTag])) < 1:
+      await ctx.send("There are no names in this tag!")
+      
+    else:
       for i in db["tags"][currentTag]:
         ss += particle
         ss += i
-    else:
-      await ctx.send("There are no names in this tag!")
 
-    if prefab != "\0":
-      prefab = prefab.lower()
-      if prefab == "ig":
-        ss = "interactable&giftable" + ss
-      elif prefab == "ig3":
-        ss = "interactable&giftable&!friendlevel3&!lucky" + ss
-    await ctx.send(ss)
+      if prefab != "\0":
+        prefab = prefab.lower()
+        if prefab == "ig":
+          ss = "interactable&giftable" + ss
+        elif prefab == "ig3":
+          ss = "interactable&giftable&!friendlevel3&!lucky" + ss
+      await ctx.send(ss)
 
 
 @client.command()
