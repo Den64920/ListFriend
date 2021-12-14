@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "discord-bot-template"
-version = "0.1.0"
+name = "ListFriend"
+version = "0.1.1"
 description = "Organize groups of friends into tags!"
 authors = ["den :)"]
 
@@ -8,6 +8,7 @@ authors = ["den :)"]
 python = "^3.8"
 discord = "^1.0.1"
 Flask = "^2.0.2"
+replit = "^3.2.4"
 
 [tool.poetry.dev-dependencies]
 

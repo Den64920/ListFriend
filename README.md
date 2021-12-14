@@ -1,4 +1,12 @@
-Project Outline!
+<h2>ToDo:</h2>
+<ul>
+  <li>prefab managing system
+  <li>gui removal system
+
+</ul>
+
+
+<h3>Project Outline!</h3>
 
 User can use a comand to create new tags and they are stored in a list of tags
 All tags are in a master list of json and in each tag is the usernames
@@ -21,8 +29,3 @@ to add a user simply set the tag with /tag and if the tag does not exist a error
 /commands will list commands
 
 
-
-ToDo:
--Command system prototype & saving to json
--Implement Command system to bot
--Webserver

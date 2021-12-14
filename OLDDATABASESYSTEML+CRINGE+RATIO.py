@@ -11,16 +11,23 @@ from replit import db
 from webserver import keep_alive
 
 
+#save and load funcitons
+def dbload(tags):
+  with open('database.json') as f:
+    tags = json.load(f)
+    return tags
 
+def dbsave():
+  with open('database.json', 'w') as f:
+      json.dump(tags, f)
 
 #returns a list of the keys aka tags
-def listKeys():
-  from replit import db
-  list = []
-  for key in db["tags"].keys():
-    list.append(key) 
-
-  return list
+def listKeys(dict):
+    list = []
+    for key in dict.keys():
+        list.append(key)
+          
+    return list
 
 client = discord.Client()
 
@@ -29,7 +36,7 @@ client = commands.Bot(command_prefix = '/', help_command=None) #put your own pre
 
 #start up
 tags = {}
-tags = db["tags"]
+tags = dbload(tags)
 global currentTag
 currentTag = ""
 
@@ -45,7 +52,7 @@ async def db(ctx):
 async def tag(ctx,tag="-8533"):
   if tag != "-8533":
     tag = tag.lower()
-    if tag in listKeys():
+    if tag in listKeys(tags):
       await ctx.send("Set Current Tag To : "+str(tag))
       global currentTag
       currentTag = tag
@@ -55,50 +62,42 @@ async def tag(ctx,tag="-8533"):
     await ctx.send("Current Tag: "+str(currentTag))
 
 @client.command()
-async def tags(ctx):
-  await ctx.send(listKeys())
+async def viewtags(ctx):
+  await ctx.send(listKeys(tags))
 
 @client.command()
 async def list(ctx):
-  from replit import db
   if currentTag == "":
     await ctx.send("You have not set a tag! Use /tag to set one!")
   else:
-    await ctx.send(sorted(db["tags"][currentTag]))
+    await ctx.send(sorted(tags[currentTag]))
 
 @client.command()
 async def create(ctx,newTagName):
-  from replit import db
   newTagName = newTagName.lower()
-  newTagNameInKeys = newTagName in listKeys()
+  newTagNameInKeys = newTagName in listKeys(tags)
   if newTagNameInKeys == False:
-    db["tags"][newTagName] = []
+    tags[newTagName] = []
     await ctx.send("Created Tag: "+str(newTagName))
+    dbsave()
   else:
     await ctx.send("Tag already exists!")
 
 @client.command()
 async def delete(ctx,tagName):
-  from replit import db
   tagName = tagName.lower()
-
-  tagNameInKeys = tagName in listKeys()
-  if tagNameInKeys == True:
-    tags.pop(tagName)
-    await ctx.send("Deleted Tag: "+str(tagName))
-  else:
-    await ctx.send("Tag Does Not Exist!")
-
+  tags.pop(tagName)
+  await ctx.send("Deleted Tag: "+str(tagName))
+  dbsave()
 
 
 @client.command()
 async def add(ctx,userName):
-  from replit import db
   userName = userName.lower()
   if currentTag == "":
     await ctx.send("You have not set a tag! Use /tag to set one!")
   else:
-    usernameInTag = userName in db["tags"][currentTag]
+    usernameInTag = userName in tags[currentTag]
     if usernameInTag == False:
       tags[currentTag].append(userName)
       await ctx.send("Added user: "+str(userName)+" to "+str(currentTag))
@@ -116,22 +115,18 @@ async def remove(ctx,userName):
   else:
     tags[currentTag].remove(userName)
     await ctx.send("Removed user: "+str(userName)+" to "+str(currentTag))
-
+    dbsave()
 
 #/ss generate search string
 @client.command()
 async def ss(ctx,particle,prefab="\0"):
-  from replit import db
   if currentTag == "":
     await ctx.send("You have not set a tag! Use /tag to set one!")
   else:
     ss = ""
-    if (len(db["tags"][currentTag])) < 1:
-      for i in db["tags"][currentTag]:
-        ss += particle
-        ss += i
-    else:
-      await ctx.send("There are no names in this tag!")
+    for i in tags[currentTag]:
+      ss += particle
+      ss += i
 
     if prefab != "\0":
       prefab = prefab.lower()
@@ -144,7 +139,7 @@ async def ss(ctx,particle,prefab="\0"):
 
 @client.command()
 async def help(ctx):
-  helpMsg = "Organize groups of friends into tags!\nTo show your tags use the command /tags\nTo start working with a tag use /tag <name-of-tag>\nIf you want to create a new tag use /create <name-of-new-tag> (You can delete tags the same way with /delete\nOnce you have selected a tag use /add <username> or /remove <username> to add and remove people from the tag\nYou can view all the members of a tag by using /list\nTo generate a search string of the users use /ss <particle> i.e. (/ss &) or (/ss &!)\nTo add interactable and giftable friends to the search string or and remove friendlevel3 use ig and ig3 respectively i.e. (/ss &! ig3)"
+  helpMsg = "Organize groups of friends into tags!\nTo show your tags use the command /viewtags\nTo start working with a tag use /tag <name-of-tag>\nIf you want to create a new tag use /create <name-of-new-tag> (You can delete tags the same way with /delete\nOnce you have selected a tag use /add <username> or /remove <username> to add and remove people from the tag\nYou can view all the members of a tag by using /list\nTo generate a search string of the users use /ss <particle> example (/ss &) or (/ss &!)"
   await ctx.send(helpMsg)
 
 
