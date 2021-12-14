@@ -1,6 +1,6 @@
 <h2>ToDo:</h2>
 <ul>
-  <li>prefab managing system
+  <li>search string prefab managing system
   <li>gui removal system
 
 </ul>
