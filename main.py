@@ -31,8 +31,10 @@ client = commands.Bot(command_prefix = '/', help_command=None) #put your own pre
 tags = {}
 tags = db["tags"]
 global currentTag
-currentTag = ""
-
+try:
+  currentTag = db["currentTag"]
+except:
+  currentTag = ""
 
 # commands
 
@@ -51,6 +53,7 @@ async def tag(ctx,tag="-8533"):
       await ctx.send("Set Current Tag To : "+str(tag))
       global currentTag
       currentTag = tag
+      db["currentTag"] = tag
     else:
       await ctx.send("This tag does not exist... try /list to see if you misspelled an existing tag or use /create to create a new tag")
   else:
